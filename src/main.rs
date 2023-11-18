@@ -1,14 +1,21 @@
+mod hittable;
 mod ray;
+mod sphere;
 
 use std::io;
 
 use cgmath::{InnerSpace, Vector3};
 use image::{ImageBuffer, Rgba, RgbaImage};
 
+use crate::hittable::Hittable;
 use crate::ray::Ray;
+use crate::sphere::Sphere;
 
 fn main() -> io::Result<()> {
-    let img: RgbaImage = generate_image();
+    let radius: Vector3<f32> = Vector3::new(0., 0., -1.);
+    let sphere: Sphere = Sphere::new(radius, 0.5);
+
+    let img: RgbaImage = generate_image(&sphere);
 
     img.save("test.png")
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
@@ -16,7 +23,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn generate_image() -> RgbaImage {
+fn generate_image(hittable: &dyn Hittable) -> RgbaImage {
     let width = 200;
     let height = 100;
     let upper_left_corner: Vector3<f32> = Vector3::new(-2., 1., -1.);
@@ -30,7 +37,11 @@ fn generate_image() -> RgbaImage {
         let v = y as f32 / height as f32;
         let direction = upper_left_corner + u * horizontal_span + v * vertical_span;
         let ray = Ray::new(origin, direction);
-        *pixel = color_ray(&ray)
+
+        match hittable.test_ray(&ray, 0., 100.) {
+            Some(color) => *pixel = color,
+            None => *pixel = color_ray(&ray),
+        }
     }
     return img;
 }
