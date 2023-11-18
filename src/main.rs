@@ -1,16 +1,8 @@
-mod camera;
-mod hittable;
-mod ray;
-mod sphere;
-
 use std::io;
 
 use cgmath::Vector3;
-use hittable::Hittable;
 use image::RgbaImage;
-
-use crate::camera::Camera;
-use crate::sphere::Sphere;
+use rust_ray_tracing::{camera::Camera, hittable::Hittable, sphere::Sphere};
 
 fn main() -> io::Result<()> {
     let scene = make_scene();
