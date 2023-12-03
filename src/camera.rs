@@ -11,8 +11,8 @@ impl Camera {
     }
 
     pub fn render(&self, scene: &Scene) -> RgbaImage {
-        let width = 200;
-        let height = 100;
+        let width = 1000;
+        let height = 500;
         let upper_left_corner: Vector3<f32> = Vector3::new(-2., 1., -1.);
         let origin: Vector3<f32> = Vector3::new(0., 0., 0.);
         let horizontal_span: Vector3<f32> = Vector3::new(4., 0., 0.);

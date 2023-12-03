@@ -1,4 +1,4 @@
-use crate::{hittable::Hittable, ray::Ray};
+use crate::{color::Color, hittable::Hittable, ray::Ray};
 
 use image::Rgba;
 
@@ -15,7 +15,7 @@ impl Scene {
 
     pub fn test_ray(&self, ray: &Ray) -> Rgba<u8> {
         return match self.hittable.test_ray(&ray, 0., 100.) {
-            Some(hit) => Rgba([255, 0, 0, 255]),
+            Some(hit) => normal_to_color(hit.normal),
             None => self.background(&ray),
         };
     }
@@ -23,14 +23,13 @@ impl Scene {
     fn background(&self, ray: &Ray) -> Rgba<u8> {
         let normalized_direction = ray.direction.normalize();
         let blend_factor = 0.5 * (normalized_direction.y + 1.);
-        let white = Vector3::new(1., 1., 1.);
-        let light_blue = Vector3::new(0.5, 0.7, 1.0);
-
-        let color = (1. - blend_factor) * white + blend_factor * light_blue;
-
-        let red = (color.x * 255.) as u8;
-        let green = (color.y * 255.) as u8;
-        let blue = (color.z * 255.) as u8;
-        return Rgba([red, green, blue, 255]);
+        let color = Color::blend(Color::WHITE, Color::LIGHT_BLUE, blend_factor);
+        return color.to_rgba();
     }
+}
+
+fn normal_to_color(normal: Vector3<f32>) -> Rgba<u8> {
+    let normal_color = normal / 2. + Vector3::new(0.5, 0.5, 0.5);
+    let normal_color = Color::from_vector(normal_color);
+    return normal_color.to_rgba();
 }
