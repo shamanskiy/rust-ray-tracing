@@ -1,3 +1,5 @@
+use cgmath::Vector3;
+
 use crate::ray::Ray;
 
 pub trait Hittable {
@@ -6,6 +8,6 @@ pub trait Hittable {
 
 pub struct Hit {
     pub param: f32,
-    // pub point: Vector3<f32>,
-    // pub normal: Vector3<f32>,
+    pub point: Vector3<f32>,
+    pub normal: Vector3<f32>,
 }

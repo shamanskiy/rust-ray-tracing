@@ -14,6 +14,16 @@ impl Sphere {
     pub fn new(center: Vector3<f32>, radius: f32) -> Self {
         Self { center, radius }
     }
+
+    fn evaluate_hit(&self, ray: &Ray, param: f32) -> Hit {
+        let hit_point = ray.eval_at(param);
+        let normal = (hit_point - self.center) / self.radius;
+        return Hit {
+            param: param,
+            point: hit_point,
+            normal: normal,
+        };
+    }
 }
 
 impl Hittable for Sphere {
@@ -32,13 +42,13 @@ impl Hittable for Sphere {
 
         let left = (-b - d_sqrt) / (2. * a);
         if left >= min_t && left <= max_t {
-            let hit = Hit { param: left };
+            let hit = self.evaluate_hit(ray, left);
             return Some(hit);
         }
 
         let right = (-b + d_sqrt) / (2. * a);
         if right >= min_t && right <= max_t {
-            let hit = Hit { param: right };
+            let hit = self.evaluate_hit(ray, right);
             return Some(hit);
         }
 
