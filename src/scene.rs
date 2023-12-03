@@ -1,20 +1,39 @@
-use crate::{color::Color, hittable::Hittable, ray::Ray};
+use crate::{
+    color::Color,
+    hittable::{Hit, Hittable},
+    ray::Ray,
+};
 
 use image::Rgba;
 
 use cgmath::{InnerSpace, Vector3};
 
 pub struct Scene {
-    hittable: Box<dyn Hittable>,
+    hittables: Vec<Box<dyn Hittable>>,
 }
 
 impl Scene {
-    pub fn new(hittable: Box<dyn Hittable>) -> Self {
-        Self { hittable }
+    pub fn new(hittables: Vec<Box<dyn Hittable>>) -> Self {
+        Self { hittables }
     }
 
     pub fn test_ray(&self, ray: &Ray) -> Rgba<u8> {
-        return match self.hittable.test_ray(&ray, 0., 100.) {
+        let mut closest_hit: Option<Hit> = None;
+        let mut closest_hit_param = f32::INFINITY;
+
+        for hittable in self.hittables.iter() {
+            match hittable.test_ray(ray, 0., 100.) {
+                Some(hit) => {
+                    if hit.param < closest_hit_param {
+                        closest_hit_param = hit.param;
+                        closest_hit = Some(hit);
+                    }
+                }
+                None => {}
+            }
+        }
+
+        return match closest_hit {
             Some(hit) => normal_to_color(hit.normal),
             None => self.background(&ray),
         };

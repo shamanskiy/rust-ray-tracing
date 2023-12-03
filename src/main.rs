@@ -15,9 +15,12 @@ fn main() -> io::Result<()> {
 }
 
 fn make_scene() -> Scene {
-    let radius: Vector3<f32> = Vector3::new(0., 0., -1.);
-    let sphere = Sphere::new(radius, 0.5);
-    return Scene::new(Box::new(sphere));
+    let sphere_center = Vector3::new(0., 0., -1.);
+    let sphere = Sphere::new(sphere_center, 0.5);
+
+    let floor_sphere_center = Vector3::new(0., -100.5, -1.);
+    let floor_sphere = Sphere::new(floor_sphere_center, 100.);
+    return Scene::new(vec![Box::new(sphere), Box::new(floor_sphere)]);
 }
 
 fn save_image(img: &RgbaImage, filename: &str) -> io::Result<()> {
