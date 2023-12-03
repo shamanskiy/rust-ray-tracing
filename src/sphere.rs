@@ -1,7 +1,9 @@
 use cgmath::Vector3;
-use image::Rgba;
 
-use crate::{hittable::Hittable, ray::Ray};
+use crate::{
+    hittable::{Hit, Hittable},
+    ray::Ray,
+};
 
 pub struct Sphere {
     pub center: Vector3<f32>,
@@ -15,7 +17,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn test_ray(&self, ray: &Ray, min_t: f32, max_t: f32) -> Option<Rgba<u8>> {
+    fn test_ray(&self, ray: &Ray, min_t: f32, max_t: f32) -> Option<Hit> {
         let center_to_origin = ray.origin - self.center;
 
         let a = cgmath::dot(ray.direction, ray.direction);
@@ -30,12 +32,14 @@ impl Hittable for Sphere {
 
         let left = (-b - d_sqrt) / (2. * a);
         if left >= min_t && left <= max_t {
-            return Some(Rgba([255, 0, 0, 255]));
+            let hit = Hit { param: left };
+            return Some(hit);
         }
 
         let right = (-b + d_sqrt) / (2. * a);
         if right >= min_t && right <= max_t {
-            return Some(Rgba([255, 0, 0, 255]));
+            let hit = Hit { param: right };
+            return Some(hit);
         }
 
         return None;

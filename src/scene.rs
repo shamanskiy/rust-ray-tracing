@@ -15,7 +15,7 @@ impl Scene {
 
     pub fn test_ray(&self, ray: &Ray) -> Rgba<u8> {
         return match self.hittable.test_ray(&ray, 0., 100.) {
-            Some(color) => color,
+            Some(hit) => Rgba([255, 0, 0, 255]),
             None => self.background(&ray),
         };
     }
