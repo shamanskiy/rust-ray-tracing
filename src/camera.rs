@@ -7,7 +7,7 @@ pub struct Camera {
     randomizer: Box<dyn RandomGenerator>,
 }
 
-const NUM_SAMPLES: u32 = 10;
+const NUM_SAMPLES: u32 = 100;
 
 impl Camera {
     pub fn new(randomizer: Box<dyn RandomGenerator>) -> Self {

@@ -49,9 +49,9 @@ impl Color {
     }
 
     pub fn to_rgba(&self) -> Rgba<u8> {
-        let red = (self.red * 255.) as u8;
-        let green = (self.green * 255.) as u8;
-        let blue = (self.blue * 255.) as u8;
+        let red = (self.red.sqrt() * 255.) as u8;
+        let green = (self.green.sqrt() * 255.) as u8;
+        let blue = (self.blue.sqrt() * 255.) as u8;
         return Rgba([red, green, blue, 255]);
     }
 
