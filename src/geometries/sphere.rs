@@ -1,9 +1,8 @@
 use cgmath::Vector3;
 
-use crate::{
-    hittable::{Hit, Hittable},
-    ray::Ray,
-};
+use crate::ray::Ray;
+
+use crate::geometries::hittable::{Hit, Hittable};
 
 pub struct Sphere {
     pub center: Vector3<f32>,
@@ -22,6 +21,7 @@ impl Sphere {
             param: param,
             point: hit_point,
             normal: normal,
+            material: None,
         };
     }
 }

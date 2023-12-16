@@ -1,10 +1,12 @@
 use crate::{
     color::Color,
-    hittable::{Hit, Hittable},
+    geometries::hittable::{Hit, Hittable},
     ray::Ray,
 };
 
-use cgmath::{InnerSpace, Vector3};
+use cgmath::InnerSpace;
+
+const MAX_REFLECTIONS: u32 = 2;
 
 pub struct Scene {
     hittables: Vec<Box<dyn Hittable>>,
@@ -16,6 +18,26 @@ impl Scene {
     }
 
     pub fn test_ray(&self, ray: &Ray) -> Color {
+        return self.test_ray_recursive(ray, 0);
+    }
+
+    fn test_ray_recursive(&self, ray: &Ray, reflection_level: u32) -> Color {
+        let closest_hit = self.find_closest_hit(ray);
+
+        if closest_hit.is_none() {
+            return self.background(ray);
+        }
+
+        if reflection_level >= MAX_REFLECTIONS {
+            return Color::BLACK;
+        }
+
+        let hit = closest_hit.unwrap();
+        let reflection = hit.material.unwrap().reflect(hit.point, hit.normal);
+        return reflection.color * self.test_ray_recursive(&reflection.ray, reflection_level + 1);
+    }
+
+    fn find_closest_hit(&self, ray: &Ray) -> Option<Hit> {
         let mut closest_hit: Option<Hit> = None;
         let mut closest_hit_param = f32::INFINITY;
 
@@ -31,10 +53,7 @@ impl Scene {
             }
         }
 
-        return match closest_hit {
-            Some(hit) => normal_to_color(hit.normal),
-            None => self.background(&ray),
-        };
+        return closest_hit;
     }
 
     fn background(&self, ray: &Ray) -> Color {
@@ -45,8 +64,8 @@ impl Scene {
     }
 }
 
-fn normal_to_color(normal: Vector3<f32>) -> Color {
-    let normal_color = normal / 2. + Vector3::new(0.5, 0.5, 0.5);
-    let normal_color = Color::from_vector(normal_color);
-    return normal_color;
-}
+// fn normal_to_color(normal: Vector3<f32>) -> Color {
+//     let normal_color = normal / 2. + Vector3::new(0.5, 0.5, 0.5);
+//     let normal_color = Color::from_vector(normal_color);
+//     return normal_color;
+// }

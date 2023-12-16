@@ -1,16 +1,19 @@
 use image::{ImageBuffer, RgbaImage};
-use rand::Rng;
 
-use crate::{color::Color, ray::Ray, scene::Scene};
+use crate::{color::Color, rand::random_generator::RandomGenerator, ray::Ray, scene::Scene};
 use cgmath::Vector3;
 
-pub struct Camera {}
+pub struct Camera {
+    randomizer: Box<dyn RandomGenerator>,
+}
 
 const NUM_SAMPLES: u32 = 10;
 
 impl Camera {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(randomizer: Box<dyn RandomGenerator>) -> Self {
+        Self {
+            randomizer: randomizer,
+        }
     }
 
     pub fn render(&self, scene: &Scene) -> RgbaImage {
@@ -40,7 +43,7 @@ impl Camera {
     }
 
     fn to_param(&self, index: u32, max_index: u32) -> f32 {
-        let random_offset: f32 = rand::thread_rng().gen_range(0.0..1.0);
+        let random_offset: f32 = self.randomizer.f32();
         return (index as f32 + random_offset) / max_index as f32;
     }
 }

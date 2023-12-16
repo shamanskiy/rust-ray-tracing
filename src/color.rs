@@ -1,8 +1,9 @@
-use std::ops::{Add, Div};
+use std::ops::{Add, Div, Mul};
 
 use cgmath::Vector3;
 use image::Rgba;
 
+#[derive(Clone, Copy)]
 pub struct Color {
     pub red: f32,
     pub green: f32,
@@ -13,6 +14,16 @@ impl Color {
         red: 1.,
         green: 1.,
         blue: 1.,
+    };
+    pub const MEDIUM_GRAY: Color = Color {
+        red: 0.5,
+        green: 0.5,
+        blue: 0.5,
+    };
+    pub const RED: Color = Color {
+        red: 1.,
+        green: 0.,
+        blue: 0.,
     };
     pub const LIGHT_BLUE: Color = Color {
         red: 0.5,
@@ -72,6 +83,18 @@ impl Div<f32> for Color {
             red: self.red / rhs,
             green: self.green / rhs,
             blue: self.blue / rhs,
+        };
+    }
+}
+
+impl Mul for Color {
+    type Output = Color;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        return Color {
+            red: self.red * rhs.red,
+            green: self.green * rhs.green,
+            blue: self.blue * rhs.blue,
         };
     }
 }
