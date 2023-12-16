@@ -1,9 +1,12 @@
 use image::{ImageBuffer, RgbaImage};
+use rand::Rng;
 
-use crate::{ray::Ray, scene::Scene};
+use crate::{color::Color, ray::Ray, scene::Scene};
 use cgmath::Vector3;
 
 pub struct Camera {}
+
+const NUM_SAMPLES: u32 = 10;
 
 impl Camera {
     pub fn new() -> Self {
@@ -20,13 +23,24 @@ impl Camera {
 
         let mut img: RgbaImage = ImageBuffer::new(width, height);
         for (x, y, pixel) in img.enumerate_pixels_mut() {
-            let u = x as f32 / width as f32;
-            let v = y as f32 / height as f32;
-            let direction = upper_left_corner + u * horizontal_span + v * vertical_span;
-            let ray = Ray::new(origin, direction);
+            let mut total_color = Color::BLACK;
 
-            *pixel = scene.test_ray(&ray);
+            for _ in 0..NUM_SAMPLES {
+                let u = self.to_param(x, width);
+                let v = self.to_param(y, height);
+                let direction = upper_left_corner + u * horizontal_span + v * vertical_span;
+                let ray = Ray::new(origin, direction);
+
+                total_color = total_color + scene.test_ray(&ray);
+            }
+
+            *pixel = (total_color / NUM_SAMPLES as f32).to_rgba();
         }
         return img;
+    }
+
+    fn to_param(&self, index: u32, max_index: u32) -> f32 {
+        let random_offset: f32 = rand::thread_rng().gen_range(0.0..1.0);
+        return (index as f32 + random_offset) / max_index as f32;
     }
 }

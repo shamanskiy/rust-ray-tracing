@@ -1,3 +1,5 @@
+use std::ops::{Add, Div};
+
 use cgmath::Vector3;
 use image::Rgba;
 
@@ -16,6 +18,11 @@ impl Color {
         red: 0.5,
         green: 0.7,
         blue: 1.,
+    };
+    pub const BLACK: Color = Color {
+        red: 0.,
+        green: 0.,
+        blue: 0.,
     };
 
     pub fn new(red: f32, green: f32, blue: f32) -> Self {
@@ -42,6 +49,30 @@ impl Color {
         let green = lerp(color1.green, color2.green, blend_ratio);
         let blue = lerp(color1.blue, color2.blue, blend_ratio);
         Self { red, green, blue }
+    }
+}
+
+impl Add for Color {
+    type Output = Color;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        return Color {
+            red: self.red + rhs.red,
+            green: self.green + rhs.green,
+            blue: self.blue + rhs.blue,
+        };
+    }
+}
+
+impl Div<f32> for Color {
+    type Output = Color;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        return Color {
+            red: self.red / rhs,
+            green: self.green / rhs,
+            blue: self.blue / rhs,
+        };
     }
 }
 
